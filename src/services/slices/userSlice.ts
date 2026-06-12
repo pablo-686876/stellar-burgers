@@ -23,7 +23,7 @@ type TUserSlice = {
 
 const initialState: TUserSlice = {
   user: null,
-  isAuthLoading: false,
+  isAuthLoading: true,
   error: null,
   orders: [],
   isOrdersLoading: false

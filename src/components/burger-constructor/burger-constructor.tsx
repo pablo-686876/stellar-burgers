@@ -13,7 +13,6 @@ import {
   isOrderLoadingSelector,
   clearState
 } from '../../services/slices/constructorSlice';
-import { getFeeds } from '../../services/slices/feedSlice';
 
 export const BurgerConstructor: FC = () => {
   const ingredients = useSelector(orderIngredientSelector);
@@ -27,20 +26,25 @@ export const BurgerConstructor: FC = () => {
   };
 
   const orderRequest = useSelector(isOrderLoadingSelector);
-
   const orderModalData = useSelector(orderBurgerSelector);
 
   const onOrderClick = () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
     if (!constructorItems.bun || orderRequest) return;
-    if (!user) navigate('/login');
-    const ingredientsId = [bun!._id, ...ingredients.map((item) => item._id)];
+
+    const ingredientsId = [
+      bun!._id,
+      ...ingredients.map((item) => item._id),
+      bun!._id
+    ];
     dispatch(orderBurger(ingredientsId));
   };
 
   const closeOrderModal = () => {
-    navigate('/feed');
     dispatch(clearState());
-    dispatch(getFeeds());
   };
 
   const price = useMemo(() => {

@@ -37,7 +37,10 @@ export const constructorSlice = createSlice({
   name: 'constructorSlice',
   initialState,
   reducers: {
-    clearState: () => initialState,
+    clearState: (state) => {
+      state.orderBurger = null;
+      state.orderError = null;
+    },
     addOrderIngredient: {
       reducer: (state, action: PayloadAction<TConstructorIngredient>) => {
         state.orderIngredients.push(action.payload);
@@ -103,6 +106,8 @@ export const constructorSlice = createSlice({
       .addCase(orderBurger.fulfilled, (state, action) => {
         state.isOrderLoading = false;
         state.orderBurger = action.payload;
+        state.bun = null;
+        state.orderIngredients = [];
       })
       .addCase(orderBurger.pending, (state) => {
         state.isOrderLoading = true;

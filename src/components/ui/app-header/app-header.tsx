@@ -35,7 +35,9 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
               ${isActive ? styles.link_active : ''}`.trim()
             }
           >
-            <ListIcon type={pathname === '/feed' ? 'primary' : 'secondary'} />
+            <ListIcon
+              type={pathname.startsWith('/feed') ? 'primary' : 'secondary'}
+            />
             <p className='text text_type_main-default ml-2'>Лента заказов</p>
           </NavLink>
         </div>

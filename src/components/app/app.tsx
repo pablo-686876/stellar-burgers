@@ -84,10 +84,38 @@ const App = () => {
           }
         />
         <Route path='/feed' element={<Feed />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
+        <Route
+          path='/login'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <Login />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/register'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <Register />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/forgot-password'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <ForgotPassword />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/reset-password'
+          element={
+            <ProtectedRoute onlyUnAuth>
+              <ResetPassword />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path='/profile'
           element={
@@ -106,12 +134,23 @@ const App = () => {
         />
         <Route path='*' element={<NotFound404 />} />
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route
+          path='/profile/orders/:number'
+          element={
+            <ProtectedRoute>
+              <OrderInfo />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       {background && (
         <Routes>
           <Route
             path='/feed/:number'
-            element={<Modal onClose={onClose} children={<OrderInfo />} />}
+            element={
+              <Modal onClose={onClose} children={<OrderInfo inModal />} />
+            }
           />
           <Route
             path='/ingredients/:id'
@@ -119,7 +158,7 @@ const App = () => {
               <Modal
                 title={'Детали ингредиента'}
                 onClose={onClose}
-                children={<IngredientDetails />}
+                children={<IngredientDetails inModal />}
               />
             }
           />
@@ -127,7 +166,7 @@ const App = () => {
             path='/profile/orders/:number'
             element={
               <ProtectedRoute>
-                <Modal onClose={onClose} children={<OrderInfo />} />
+                <Modal onClose={onClose} children={<OrderInfo inModal />} />
               </ProtectedRoute>
             }
           />

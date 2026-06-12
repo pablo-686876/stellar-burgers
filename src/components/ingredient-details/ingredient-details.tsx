@@ -3,9 +3,13 @@ import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
 import { useSelector } from '../../services/store';
 import { ingredientsSelector } from '../../services/slices/getIngredientsSlice';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-export const IngredientDetails: FC = () => {
+type TIngredientDetailsProps = {
+  inModal?: boolean;
+};
+
+export const IngredientDetails: FC<TIngredientDetailsProps> = ({ inModal }) => {
   const ingredients = useSelector(ingredientsSelector);
   const { id } = useParams();
 
@@ -17,5 +21,7 @@ export const IngredientDetails: FC = () => {
     return <Preloader />;
   }
 
-  return <IngredientDetailsUI ingredientData={ingredientData} />;
+  return (
+    <IngredientDetailsUI ingredientData={ingredientData} inModal={inModal} />
+  );
 };

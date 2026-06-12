@@ -16,7 +16,11 @@ import {
   orderUpdatedAtSelector
 } from '../../services/slices/orderSlice';
 
-export const OrderInfo: FC = () => {
+type TOrderInfo = {
+  inModal?: boolean;
+};
+
+export const OrderInfo: FC<TOrderInfo> = ({ inModal }) => {
   const { number } = useParams();
   const orderNumber = Number(number);
   const dispatch = useDispatch();
@@ -88,5 +92,5 @@ export const OrderInfo: FC = () => {
     return <Preloader />;
   }
 
-  return <OrderInfoUI orderInfo={orderInfo} />;
+  return <OrderInfoUI orderInfo={orderInfo} inModal={inModal} />;
 };
