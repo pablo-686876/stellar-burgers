@@ -13,7 +13,7 @@ type TConstructorSlice = {
   orderError: string | null;
 };
 
-const initialState: TConstructorSlice = {
+export const initialState: TConstructorSlice = {
   orderIngredients: [],
   bun: null,
   isOrderLoading: false,
