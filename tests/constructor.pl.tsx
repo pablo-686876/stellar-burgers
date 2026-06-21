@@ -1,12 +1,14 @@
 import { test, expect } from '@playwright/test';
 
+test.beforeEach(async ({ page }) => {
+  await page.routeFromHAR('tests/hars/ingredients.har', {
+    url: '**/ingredients',
+    update: false
+  });
+});
+
 test.describe('Конструктор бургера', () => {
   test('Добавление ингредиентов в конструктор', async ({ page }) => {
-    await page.routeFromHAR('tests/hars/ingredients.har', {
-      url: '**/ingredients',
-      update: false
-    });
-
     await page.goto('/');
     await expect(page.getByTestId('ingredient-list')).toBeVisible();
 
@@ -19,33 +21,39 @@ test.describe('Конструктор бургера', () => {
     ).toBeVisible();
     await expect(ingredientsList.locator('li')).toHaveCount(0);
 
-    //добавляем булку
-    await page
+    // находим булку
+    const Bun = page
       .getByTestId('ingredient-button')
       .filter({ hasText: /булка/i })
-      .locator('button')
-      .first()
-      .click();
+      .first();
 
-    //добавляем ингредиент
-    await page
+    // находим основной ингредиент
+    const Main = page
       .getByTestId('ingredient-button')
       .filter({ hasText: /филе|мясо|биокотлета/i })
-      .locator('button')
-      .first()
-      .click();
+      .first();
 
-    //добавляем соус
-    await page
+    // находим соус
+    const Sauce = page
       .getByTestId('ingredient-button')
       .filter({ hasText: /соус/i })
-      .locator('button')
-      .first()
-      .click();
+      .first();
 
-    // проверяем наличие в конструкторе
+    const bunName = await Bun.getByTestId('ingredient-name').innerText();
+    const mainName = await Main.getByTestId('ingredient-name').innerText();
+    const sauceName = await Sauce.getByTestId('ingredient-name').innerText();
+
+    //добавляем ингредиенты
+    await Bun.locator('button').first().click();
+    await Main.locator('button').first().click();
+    await Sauce.locator('button').first().click();
+
+    // проверяем наличие в конструкторе - количество и название ингредиентов
     await expect(ingredientsList.locator('li')).toHaveCount(2);
+    await expect(ingredientsList).toContainText(mainName);
+    await expect(ingredientsList).toContainText(sauceName);
     await expect(page.getByTestId('bun-order')).toHaveCount(1);
+    await expect(page.getByTestId('bun-order')).toContainText(bunName);
   });
 });
 
@@ -54,17 +62,22 @@ test.describe('Модальные окна', () => {
     await page.goto('/');
     await expect(page.getByTestId('ingredient-list')).toBeVisible();
 
-    const ingredientItem = page
-      .getByTestId('ingredient-items')
-      .locator('li')
-      .first();
-    const ingredientId = await ingredientItem.getAttribute('data-ingredient-id');
+    const ingredientItem = page.getByTestId('ingredient-button').first();
+
+    const ingredientId =
+      await ingredientItem.getAttribute('data-ingredient-id');
+
+    const ingredientName = await ingredientItem
+      .getByTestId('ingredient-name')
+      .innerText();
 
     await ingredientItem.click();
+    await page.waitForURL(/\/ingredients\/.+/);
     await expect(page).toHaveURL(new RegExp(`/ingredients/${ingredientId}`));
 
     await expect(page.getByTestId('modal')).toBeVisible();
     await page.waitForTimeout(500);
+    await expect(page.getByTestId('modal')).toContainText(ingredientName);
 
     const modalCloseButton = page.getByTestId('modal-close-button');
     await modalCloseButton.click();
