@@ -10,7 +10,7 @@ type TGetIngredients = {
   isInit: boolean;
 };
 
-const initialState: TGetIngredients = {
+export const initialState: TGetIngredients = {
   isIngredientsLoading: false,
   ingridients: [],
   error: null,
@@ -19,7 +19,13 @@ const initialState: TGetIngredients = {
 
 export const getIngredients = createAsyncThunk(
   'ingredients/get',
-  async () => await getIngredientsApi()
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getIngredientsApi();
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
 );
 
 export const getIngredientsSlice = createSlice({
